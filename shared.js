@@ -18,3 +18,7 @@ Array.prototype.sum = function () {
 Array.prototype.sortIntegers = function () {
   return this.sort((a, b) => a - b);
 };
+
+Array.prototype.distinct = function () {
+  return this.filter((val, i, self) => self.indexOf(val) === i);
+};
