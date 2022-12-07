@@ -13,34 +13,30 @@ const addSize = (cursor, size) => {
 
 const tree = data.reduce(
   (cursor, cur) => {
-    if (cur === "$ ls") {
-      return cursor;
-    }
-    if (cur.startsWith("$ cd ")) {
-      const folder = cur.replace("$ cd ", "");
-      if (folder === "/") {
-        return getRoot(cursor);
+    const parts = cur.trim().split(" ");
+    if (parts[0] === "$") {
+      if (parts[1] === "cd") {
+        if (parts[2] === "/") {
+          return getRoot(cursor);
+        }
+        if (parts[2] === "..") {
+          return cursor.parent;
+        }
+        return cursor[parts[2]];
       }
-      if (folder === "..") {
-        return cursor.parent;
-      }
-      return cursor[folder];
-    }
-    if (cur.startsWith("dir ")) {
-      const folder = cur.replace("dir ", "");
-      cursor[folder] = { parent: cursor, size: 0 };
+    } else if (parts[0] === "dir") {
+      cursor[parts[1]] = { parent: cursor, size: 0 };
     } else {
-      const [size, _] = cur.split(" ");
-      addSize(cursor, +size);
+      addSize(cursor, +parts[0]);
     }
     return cursor;
   },
   { size: 0 }
 );
 
-//part 1
 const root = getRoot(tree);
 
+//part 1
 const p1 = (cursor) => {
   return Object.keys(cursor).reduce((res, cur) => {
     if (cur === "parent") {
@@ -51,7 +47,6 @@ const p1 = (cursor) => {
     return res + p1(cursor[cur]);
   }, 0);
 };
-
 console.log(p1(root));
 
 //part2
@@ -69,5 +64,4 @@ const p2 = (cursor) => {
     return Math.min(res, p2(cursor[cur]));
   }, Infinity);
 };
-
 console.log(p2(root));
