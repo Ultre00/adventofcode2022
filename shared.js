@@ -44,3 +44,25 @@ const _elementOrNull = (arr, index) =>
 Array.prototype.elementOrNull = function (...params) {
   return params.reduce((res, cur) => _elementOrNull(res, cur), this);
 };
+
+Array.prototype.traverse = function (coord, directions, callback, breakOn) {
+  let result = [];
+  for (const dir of directions) {
+    let dirResult = [];
+    let i = 0;
+    let toCheck = null;
+    do {
+      i++;
+      toCheck = this.elementOrNull(
+        ...coord.map((m, index) => m + i * dir[index])
+      );
+      dirResult.push(callback(toCheck, i));
+      if (breakOn && breakOn(toCheck, i)) {
+        break;
+      }
+    } while (toCheck !== null);
+    result.push(dirResult);
+  }
+
+  return result;
+};
