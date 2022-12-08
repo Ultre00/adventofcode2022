@@ -46,7 +46,7 @@ for (const [move, from, to] of steps) {
 }
 printBoard(board1);
 
-//part2
+//part 2
 const board2 = getBoardCopy();
 for (const [move, from, to] of steps) {
   const toMove = board2[from].splice(0, move);

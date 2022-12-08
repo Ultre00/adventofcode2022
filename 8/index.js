@@ -1,99 +1,64 @@
 import { getInput } from "../shared.js";
 
 const raw = getInput("8/input.txt");
-const data = raw.split("\r\n").map((m) => m.split("").map((n) => +n));
+const data = raw
+  .split("\r\n")
+  .map((m) => m.split("").map((n) => +n))
+  .transpose();
 
-//part1
-let visible = 0;
-for (let x = 0; x < data.length; x++) {
-  for (let y = 0; y < data[0].length; y++) {
-    let isVisible = true;
-    const isBlocking = (y2, x2) => data[y][x] <= data[y2][x2];
-    if (x === 0 || y === 0 || x === data.length || y === data[0].length) {
-      //nothing
-    } else {
-      for (let a = x + 1; a < data.length; a++) {
-        if (isBlocking(y, a)) {
-          isVisible = false;
-          break;
-        }
-      }
+const directions = [
+  [1, 0],
+  [-1, 0],
+  [0, -1],
+  [0, 1],
+];
 
-      if (!isVisible) {
-        isVisible = true;
-        for (let a = y + 1; a < data[0].length; a++) {
-          if (isBlocking(a, x)) {
-            isVisible = false;
-            break;
-          }
-        }
+const isVisible = (x, y) => {
+  for (const [dx, dy] of directions) {
+    let i = 0;
+    let visible = true;
+    let toCheck = null;
+    do {
+      toCheck = data.elementOrNull(x + ++i * dx, y + i * dy);
+      if (toCheck != null && data[x][y] <= toCheck) {
+        visible = false;
+        break;
       }
-      if (!isVisible) {
-        isVisible = true;
-        for (let a = 0; a < x; a++) {
-          if (isBlocking(y, a)) {
-            isVisible = false;
-            break;
-          }
-        }
-      }
-      if (!isVisible) {
-        isVisible = true;
-        for (let a = 0; a < y; a++) {
-          if (isBlocking(a, x)) {
-            isVisible = false;
-            break;
-          }
-        }
-      }
-    }
-    visible += isVisible ? 1 : 0;
-  }
-}
-console.log(visible);
+    } while (toCheck !== null);
 
-//part2
-let highest = 0;
-for (let y = 0; y < data.length; y++) {
-  for (let x = 0; x < data[0].length; x++) {
-    const isBlocking = (y2, x2) => data[y][x] <= data[y2][x2];
-    let visible = [0, 0, 0, 0];
-    if (x === 0 || y === 0 || x === data.length || y === data[0].length) {
-      //nothing
-    } else {
-      //down
-      for (let a = x + 1; a < data.length; a++) {
-        visible[0]++;
-        if (isBlocking(y, a)) {
-          break;
-        }
-      }
-
-      for (let a = y + 1; a < data[0].length; a++) {
-        visible[1]++;
-        if (isBlocking(a, x)) {
-          break;
-        }
-      }
-
-      for (let a = x - 1; a >= 0; a--) {
-        visible[2]++;
-        if (isBlocking(y, a)) {
-          break;
-        }
-      }
-
-      for (let a = y - 1; a >= 0; a--) {
-        visible[3]++;
-        if (isBlocking(a, x)) {
-          break;
-        }
-      }
-    }
-    const s = visible.product();
-    if (s > highest) {
-      highest = s;
+    if (visible) {
+      return true;
     }
   }
-}
-console.log(highest);
+  return false;
+};
+
+const getScore = (x, y) => {
+  let scores = [];
+  for (const [dx, dy] of directions) {
+    let i = 0;
+    let score = 0;
+    let toCheck = null;
+    do {
+      toCheck = data.elementOrNull(x + ++i * dx, y + i * dy);
+      score += toCheck != null ? 1 : 0;
+      if (toCheck != null && data[x][y] <= toCheck) {
+        break;
+      }
+    } while (toCheck !== null);
+    scores.push(score);
+  }
+  return scores.product();
+};
+
+//part 1
+console.log(
+  data
+    .map((row, x) => row.map((col, y) => (isVisible(x, y) ? 1 : 0)).sum())
+    .sum()
+);
+
+//part 2
+console.log(
+  data.map((row, x) => row.map((col, y) => getScore(x, y)).max()).max()
+);

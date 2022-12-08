@@ -14,5 +14,5 @@ const findMarker = (str, size) => {
 //part 1
 console.log(findMarker(raw, 4));
 
-//part2
+//part 2
 console.log(findMarker(raw, 14));

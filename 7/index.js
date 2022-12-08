@@ -49,7 +49,7 @@ const p1 = (cursor) => {
 };
 console.log(p1(root));
 
-//part2
+//part 2
 const p2 = (cursor) => {
   return Object.keys(cursor).reduce((res, cur) => {
     if (cur === "parent") {

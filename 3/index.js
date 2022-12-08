@@ -18,7 +18,7 @@ const getMatchingLetters = (value) =>
 //part 1
 console.log(getPoints(getMatchingLetters(data)).sum());
 
-// //part2
+//part 2
 const grouped = data.reduce(
   (res, cur, i) => {
     if (i % 3 == 0) {

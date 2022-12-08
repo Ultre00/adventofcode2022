@@ -17,7 +17,7 @@ const p1 = data.reduce(
 );
 console.log(p1);
 
-//part2
+//part 2
 const p2 = data.reduce(
   (res, cur) =>
     isOverlapping(cur[0], cur[1]) || isOverlapping(cur[1], cur[0])

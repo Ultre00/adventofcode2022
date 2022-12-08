@@ -18,7 +18,7 @@ const pointMapPart1 = {
 //part 1
 console.log(data.map(([a, b]) => pointMapPart1[`${a}${b}`]).sum());
 
-//part2
+//part 2
 const pointMapPart2 = {
   AX: 0 + 3,
   AY: 3 + 1,
