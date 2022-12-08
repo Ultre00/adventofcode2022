@@ -15,6 +15,10 @@ Array.prototype.sum = function () {
   return this.reduce((res, cur) => +res + +cur);
 };
 
+Array.prototype.product = function () {
+  return this.reduce((res, cur) => +res * +cur);
+};
+
 Array.prototype.sortIntegers = function () {
   return this.sort((a, b) => a - b);
 };
