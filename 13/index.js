@@ -3,27 +3,25 @@ import { getInput } from "../shared.js";
 const raw = getInput("13/input.txt");
 const data = raw.split("\r\n\r\n").map((m) => m.split("\r\n").map(JSON.parse));
 
-const states = {
-  RIGHT_ORDER: 1,
-  WRONG_ORDER: 0,
-  KEEP_GOING: -1,
-};
-
 const compare = (left, right) => {
   if (left === undefined && right === undefined) {
-    return states.KEEP_GOING;
+    return 0;
   }
   if (left === undefined) {
-    return states.RIGHT_ORDER;
+    return 1;
   }
   if (right === undefined) {
-    return states.WRONG_ORDER;
+    return -1;
   }
   if (Array.isArray(left) && Array.isArray(right)) {
-    let result;
-    do {
-      result = compare(left.shift(), right.shift());
-    } while (result === states.KEEP_GOING && (left.length || right.length));
+    let result = 0;
+    for (
+      let i = 0;
+      i < Math.max(left.length, right.length) && result === 0;
+      i++
+    ) {
+      result = compare(left[i], right[i]);
+    }
     return result;
   }
   if (Array.isArray(left)) {
@@ -32,16 +30,22 @@ const compare = (left, right) => {
   if (Array.isArray(right)) {
     return compare([left], right);
   }
-  return left < right
-    ? states.RIGHT_ORDER
-    : left > right
-    ? states.WRONG_ORDER
-    : states.KEEP_GOING;
+  return left < right ? 1 : left > right ? -1 : 0;
 };
 
-// part 1
+//part 1
 console.log(
   data
-    .map(([left, right], index) => (compare(left, right) ? index + 1 : 0))
+    .map(([left, right], index) => (compare(left, right) === 1 ? index + 1 : 0))
     .sum()
 );
+
+//part 2
+const start = [[2]];
+const end = [[6]];
+const totalList = data
+  .flatMap((m) => m)
+  .concat([start, end])
+  .sort(compare)
+  .reverse();
+console.log((totalList.indexOf(start) + 1) * (totalList.indexOf(end) + 1));
