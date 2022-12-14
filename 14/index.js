@@ -13,9 +13,9 @@ const sandPrioDirections = [
 ];
 
 const width = Math.max(...data.flatMap((m) => m.flatMap((n) => n[0]))) + 1;
-const height = Math.max(...data.flatMap((m) => m.flatMap((n) => n[1]))) + 1;
+const height = Math.max(...data.flatMap((m) => m.flatMap((n) => n[1]))) + 2; // 2 for p2
 
-const map = Array.from({ length: width }, () =>
+const map = Array.from({ length: width + 2 * height }, () =>
   Array.from({ length: height }, () => ".")
 );
 
@@ -25,7 +25,7 @@ for (const chain of data) {
     const [x2, y2] = chain[i];
     for (let x = 0; x <= Math.abs(x2 - x1); x++) {
       for (let y = 0; y <= Math.abs(y2 - y1); y++) {
-        map[x1 + (x1 < x2 ? x : -x)][y1 + (y1 < y2 ? y : -y)] = "#";
+        map[height + x1 + (x1 < x2 ? x : -x)][y1 + (y1 < y2 ? y : -y)] = "#";
       }
     }
   }
@@ -37,10 +37,10 @@ const loopSand = () => {
   while (true) {
     let placeSand = true;
     for (const [dx, dy] of sandPrioDirections) {
-      const element = map.elementOrNull(current[0] + dx, current[1] + dy);
-      if (element === null) {
-        return;
-      }
+      const element = map.elementOrNull(
+        height + current[0] + dx,
+        current[1] + dy
+      );
       if (element === ".") {
         current = [current[0] + dx, current[1] + dy];
         placeSand = false;
@@ -48,12 +48,15 @@ const loopSand = () => {
       }
     }
     if (placeSand) {
-      map[current[0]][current[1]] = "o";
+      map[height + current[0]][current[1]] = "o";
+      if (current[0] === sandSource[0] && current[1] === sandSource[1]) {
+        return;
+      }
       current = [...sandSource];
     }
   }
 };
 loopSand();
-
 //part 1
+map.print2d();
 console.log(map.flatMap((m) => m).filter((m) => m === "o").length);
