@@ -38,6 +38,18 @@ Array.prototype.transpose = function () {
   );
 };
 
+Array.prototype.print2d = function () {
+  const y_x_map = this.transpose();
+  let str = "";
+  for (let y = 0; y < y_x_map.length; y++) {
+    for (let x = 0; x < y_x_map[y].length; x++) {
+      str += y_x_map[y][x];
+    }
+    str += "\r\n";
+  }
+  console.log(str);
+};
+
 const _elementOrNull = (arr, index) =>
   index >= 0 && index < arr?.length ? arr[index] : null;
 
