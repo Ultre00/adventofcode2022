@@ -112,3 +112,48 @@ Array.prototype.crop2d = function (validator) {
   }
   return clone;
 };
+
+Array.prototype.flattenRanges = function () {
+  for (let i = 0; i < this.length - 1; i++) {
+    const left = this[i];
+    for (let j = i + 1; j < this.length; j++) {
+      const right = this[j];
+      const leftContainsRightFirst = right[0] >= left[0] && right[0] <= left[1];
+      const leftContainsRightSecond =
+        right[1] >= left[0] && right[1] <= left[1];
+      const rightContainsLeftFirst = left[0] >= right[0] && left[0] <= right[1];
+      const rightContainsLeftSecond =
+        left[1] >= right[0] && left[1] <= right[1];
+
+      //first check if we can completly remove a section
+      if (rightContainsLeftFirst && rightContainsLeftSecond) {
+        this.splice(i, 1);
+        i--;
+        break;
+      } else if (leftContainsRightFirst && leftContainsRightSecond) {
+        this.splice(j, 1);
+        j--;
+      } else {
+        //check if we can partially remove a section
+        if (rightContainsLeftFirst) {
+          left[0] = right[1];
+        }
+        if (leftContainsRightFirst) {
+          right[0] = left[1];
+        }
+
+        //check if we can combine
+        if (left[1] === right[0]) {
+          left[1] = right[1]; // right will be removed later
+          i--;
+          break;
+        }
+        if (right[1] === left[0]) {
+          right[1] = left[1]; // left will be removed later
+          j--;
+        }
+      }
+    }
+  }
+  return this;
+};
